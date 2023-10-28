@@ -8,7 +8,7 @@ export default function Draggable({images}) {
     const moveableRef = useRef(null);
     const targetRef = useRef(null);
     return (
-        <div className="root">
+        <>
             <div className="container ml-10" style={{
                 width: "1000px",
                 height: "600px",
@@ -88,6 +88,6 @@ export default function Draggable({images}) {
 
                 />
             </div>
-        </div>
+        </>
     );
 }
