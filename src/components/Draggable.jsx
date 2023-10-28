@@ -2,11 +2,38 @@ import * as React from "react";
 import Moveable from "react-moveable";
 import {useRef} from "react";
 import "../style/Draggable.style.css";
-import ImageDrag from "./ImageDrag.jsx";
+
 
 export default function Draggable({images}) {
     const moveableRef = useRef(null);
     const targetRef = useRef(null);
+
+    const DimensionViewable = {
+        name: "dimensionViewable",
+        props: [],
+        events: [],
+        render(moveable, React) {
+            const rect = moveable.getRect();
+
+            return <div key={"dimension-viewer"} className={"moveable-dimension"} style={{
+                position: "absolute",
+                left: `${rect.width / 2}px`,
+                top: `${rect.height + 20}px`,
+                background: "#4af",
+                borderRadius: "2px",
+                padding: "2px 4px",
+                color: "white",
+                fontSize: "13px",
+                whiteSpace: "nowrap",
+                fontWeight: "bold",
+                willChange: "transform",
+                transform: `translate(-50%, 0px)`,
+            }}>
+                {Math.round(rect.width)} x {Math.round(rect.height)}
+            </div>;
+        },
+    }
+
     return (
         <>
             <div className="container ml-10" style={{
@@ -16,7 +43,7 @@ export default function Draggable({images}) {
             }}>
                 {images.map((image,i) =>(
                     <div key={i}>
-                        <div className={"target" + i} ref={targetRef} style={{
+                        <div className={"target" + i } ref={targetRef} style={{
                             position: 'absolute',
                             width: '100px',
                             height: '100px',
@@ -35,6 +62,7 @@ export default function Draggable({images}) {
                         <Moveable
                             target={'.target' + i}
                             draggable={true}
+                            ables={[DimensionViewable]}
                             throttleDrag={1}
                             edgeDraggable={false}
                             startDragRotate={0}
@@ -53,6 +81,14 @@ export default function Draggable({images}) {
                             snapThreshold={5}
                             verticalGuidelines={[50,150,250,450,550]}
                             horizontalGuidelines={[0,100,200,400,500]}
+                            props={{
+                                dimensionViewable: true,
+                            }}
+                            onResize={e => {
+                                 e.target.style.width = `${e.width}px`;
+                                 e.target.style.height = `${e.height}px`;
+                                 e.target.style.transform = e.drag.transform;
+                             }}
                             onRender={e => {
                                 e.target.style.transform = e.transform;
                             }}
