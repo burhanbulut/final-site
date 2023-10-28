@@ -40,17 +40,19 @@ export default function Draggable({images}) {
                             startDragRotate={0}
                             throttleDragRotate={0}
                             scalable={true}
-                            keepRatio={false}
+                            keepRatio={true}
                             throttleScale={0}
                             renderDirections={["nw","n","ne","w","e","sw","s","se"]}
                             rotatable={true}
                             throttleRotate={0}
                             rotationPosition={"top"}
-                            originRelative={true}
                             snappable={true}
                             edge={[]}
                             bounds={{"left":0,"top":0,"right":0,"bottom":0,"position":"css"}}
-
+                            snapDirections={{"top":true,"left":true,"bottom":true,"right":true}}
+                            snapThreshold={5}
+                            verticalGuidelines={[50,150,250,450,550]}
+                            horizontalGuidelines={[0,100,200,400,500]}
                             onRender={e => {
                                 e.target.style.transform = e.transform;
                             }}
