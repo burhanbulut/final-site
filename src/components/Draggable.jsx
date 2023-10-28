@@ -28,6 +28,7 @@ export default function Draggable({images}) {
                             border: '1px solid #333',
                             boxSizing: 'border-box',
                             transform: "translate(0px, 0px) rotate(0deg) scale(1, 1)",
+                            cursor:'pointer'
                         }}>
                             <img src={image.url} alt="image"  style={{width:'100%',height:'100%'}}/>
                         </div>
@@ -45,7 +46,6 @@ export default function Draggable({images}) {
                             rotatable={true}
                             throttleRotate={0}
                             rotationPosition={"top"}
-                            originDraggable={true}
                             originRelative={true}
                             snappable={true}
                             edge={[]}
