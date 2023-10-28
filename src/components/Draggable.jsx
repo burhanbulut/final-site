@@ -50,9 +50,7 @@ export default function Draggable({images}) {
                             snappable={true}
                             edge={[]}
                             bounds={{"left":0,"top":0,"right":0,"bottom":0,"position":"css"}}
-                            onDragOrigin={e => {
-                                e.target.style.transformOrigin = e.transformOrigin;
-                            }}
+
                             onRender={e => {
                                 e.target.style.transform = e.transform;
                             }}
