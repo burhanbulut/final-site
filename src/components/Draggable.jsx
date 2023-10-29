@@ -1,7 +1,9 @@
 import * as React from "react";
 import Moveable from "react-moveable";
-import {useRef} from "react";
+import {useRef, useState} from "react";
 import "../style/Draggable.style.css";
+import Selecto from "react-selecto";
+
 
 
 export default function Draggable({images}) {
@@ -41,6 +43,7 @@ export default function Draggable({images}) {
                 height: "600px",
                 border: "1px solid #ccc",
             }}>
+
                 {images.map((image,i) =>(
                     <div key={i}>
                         <div className={"target" + i } ref={targetRef} style={{
@@ -64,6 +67,7 @@ export default function Draggable({images}) {
                             draggable={true}
                             ables={[DimensionViewable]}
                             throttleDrag={1}
+                            pinchable={true}
                             edgeDraggable={false}
                             startDragRotate={0}
                             throttleDragRotate={0}
@@ -92,7 +96,9 @@ export default function Draggable({images}) {
                             onRender={e => {
                                 e.target.style.transform = e.transform;
                             }}
+
                         />
+
                     </div>
                 ))}
 

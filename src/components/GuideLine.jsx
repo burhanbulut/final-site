@@ -33,6 +33,9 @@ export default function GuideLine() {
                     displayDragPos={true}
                     displayGuidePos={true}
                     useResizeObserver={true}
+                    unit={1}
+                    zoom={96}
+
                 />
             </div>
             <div className="ruler vertical">
@@ -47,6 +50,8 @@ export default function GuideLine() {
                     displayDragPos={true}
                     displayGuidePos={true}
                     useResizeObserver={true}
+                    unit={1}
+                    zoom={96}
                 />
             </div>
         </div>
