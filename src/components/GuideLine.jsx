@@ -38,6 +38,7 @@ export default function GuideLine() {
 
                 />
             </div>
+
             <div className="ruler vertical">
                 <Guides
                     ref={verticalGuidesRef}

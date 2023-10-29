@@ -31,7 +31,7 @@ export default function Draggable({images}) {
                 willChange: "transform",
                 transform: `translate(-50%, 0px)`,
             }}>
-                {Math.round(rect.width)} x {Math.round(rect.height)}
+                {(rect.width.toFixed(2) / 96).toFixed(2)} x {(rect.height.toFixed(2) / 96).toFixed(2)}
             </div>;
         },
     }
