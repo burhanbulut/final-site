@@ -12,10 +12,10 @@ function Navbar() {
                 </div>
                 <div className='mr-10 flex align-middle'>
                     <div className='flex border-2 items-center h-[40px]  justify-center mt-2 bg-black text-2xl  text-blue-50 p-2'>
-                        <button className='  '> <AiOutlineShoppingCart className='inline-block mr-2 '/>Save & Add to Cart</button>
+                        <button className=' flex items-center'> <AiOutlineShoppingCart className=' mr-2 '/>Save & Add to Cart</button>
                     </div>
-                    <div className='flex border-2 items-center h-[40px] justify-center mt-2 bg-red-700 text-2xl ml-2 text-blue-50 p-4'>
-                        <button className=' '><AiOutlineClose className='inline-block mx-2 ' />Close</button>
+                    <div className='flex border-2 items-center  h-[40px]  mt-2 bg-red-700 text-2xl ml-2 text-white p-4'>
+                        <button className='flex items-center'><AiOutlineClose className='mx-1' />Close</button>
                     </div>
                 </div>
             </div>

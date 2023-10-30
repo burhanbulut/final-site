@@ -8,22 +8,28 @@ import Navbar from "./components/Navbar.jsx";
 import EditPage from "./components/EditPage.jsx";
 
 
+
+
 function App() {
 const [images,setImages] = useState([]);
 
   return (
-    <div>
+    <>
         <div>
             <Navbar/>
         </div>
-        <div>
-            <EditPage/>
+        <div className='flex h-full'>
+            <div className='inline w-[400px] '>
+                <ImageUploader  setImage={setImages} image={images}/>
+
+            </div>
+            <div className='w-full flex-1'>
+                <EditPage  setImages={setImages}  />
+                <Canvas images={images}/>
+            </div>
         </div>
-        <div  className='main'>
-     <ImageUploader setImage={setImages} />
-       <Canvas images={images}/>
-        </div>
-    </div>
+
+    </>
   )
 }
 

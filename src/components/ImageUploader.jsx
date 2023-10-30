@@ -1,14 +1,15 @@
 import React, {useRef, useState} from 'react'
 import '../style/ImageUploader.style.css'
+import {useSelector} from "react-redux";
 
-function ImageUploader({setImage}) {
-    const [images,setImages] = useState([]);
+function ImageUploader({setImage,image}) {
     const [isDragging, setIsDragging] = useState(false);
     const fileInputRef = useRef();
     const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
     const imageRef = useRef(null);
     const [imageCount,setImageCount] = useState(1);
-
+    const imageIndex = useSelector(state => state.uploadPage.selectedImageIndex);
+    const imageScale = useSelector(state => state.uploadPage.selectedImageScale);
 
     function selectFiles(){
         fileInputRef.current.click();
@@ -24,14 +25,7 @@ function ImageUploader({setImage}) {
         setImageCount(imageCount + 1);
         if (!files || files.length === 0) return;
         const imageFiles = Array.from(files).filter(file => file.type.startsWith('image/'));
-        setImages(prevImages => [
-            ...prevImages,
-            ...imageFiles.map((file, i) => ({
-                name: file.name,
-                url: URL.createObjectURL(file),
-                id: imageCount
-            })),
-        ]);
+
 
         setImage(prevImages => [
             ...prevImages,
@@ -45,7 +39,7 @@ function ImageUploader({setImage}) {
 
     }
     function deleteImage(i){
-        setImages((prevImages) => prevImages.filter((_,index) => index !== i))
+
         setImage((prevImages) => prevImages.filter((_,index) => index !== i))
     }
 
@@ -67,15 +61,7 @@ function ImageUploader({setImage}) {
         for (let i=0;i <files.length;i++){
             if(files[i].type.split('/')[0] !== 'image') continue;
             // if (!images.some((e) =>e.name == files[i].name)){
-            setImages((prevImages) => [
-                ...prevImages,
-                {
-                    name: files[i].name,
-                    url:  URL.createObjectURL(files[i]),
-                    id:   imageCount
-                },
 
-            ]);
 
             setImage((prevImages) => [
                 ...prevImages,
@@ -94,15 +80,6 @@ function ImageUploader({setImage}) {
     function addImageList(e){
         setImageCount(imageCount + 1);
         const files = e.target;
-        console.log(files)
-        setImages((prevImages) => [
-            ...prevImages,
-            {
-                name: files.name,
-                url:  files.src,
-                id:   imageCount
-            }])
-
 
         setImage((prevImages) => [
             ...prevImages,
@@ -115,9 +92,9 @@ function ImageUploader({setImage}) {
 
     }
     function removeImages(){
-        setImages([]);
         setImageCount(0)
         setImage([]);
+
     }
 
 
@@ -125,7 +102,7 @@ function ImageUploader({setImage}) {
 
     return (
         <>
-            <div className='card w-1/4 mt-24'>
+            <div className='card '>
                 <div className='top'>
                     <p>Drag & Drop image uploading</p>
                 </div>
@@ -149,25 +126,35 @@ function ImageUploader({setImage}) {
                 </div>
                 <div className='container'>
                     {
-                        images.map((images,i) =>(
+                        image.map((image,i) =>(
                                 <div className='image' key={i}>
                                     <span className='delete' onClick={() =>deleteImage(i)} >&times;</span>
-                                    <img id={images.id} onClick={addImageList}  src={images.url} alt={images.name} ref={imageRef} onLoad={handleImageLoad} />
-
+                                    <img id={image.id} onClick={addImageList}  src={image.url} alt={image.name} ref={imageRef} onLoad={handleImageLoad} />
                                 </div>
-
                             )
 
                         )
                     }
 
                 </div>
-                <div className='flex justify-center align-middle'>
-                    <button type='button' onClick={removeImages}  >
-                        Remove All
-                    </button>
+                <div>
+                    <button className='btn mt-[300px]' onClick={ () =>{
+                        let temp = image[imageIndex];
+                        setImageCount(imageCount + 1);
+                        temp.id = imageCount +1;
+                        setImage((prevImages) => [
+                            ...prevImages,
+                            {
+                                name: temp.name,
+                                url:  temp.url,
+                                id:  imageCount  + 1,
+                                scale: imageScale,
 
+                            }])
+                    }
+                    }>Duplicate</button>
                 </div>
+
             </div>
 
         </>

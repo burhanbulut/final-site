@@ -28,7 +28,9 @@ export default function GuideLine() {
                     rulerStyle={{
                         left: "30px",
                         width: "calc(100% - 30px)",
-                        height: "100%"
+                        height: "100%",
+
+
                     }}
                     displayDragPos={true}
                     displayGuidePos={true}
@@ -46,13 +48,14 @@ export default function GuideLine() {
                     rulerStyle={{
                         top: "30px",
                         height: "calc(100% - 30px)",
-                        width: "100%"
+                        width: "100%",
                     }}
                     displayDragPos={true}
                     displayGuidePos={true}
                     useResizeObserver={true}
                     unit={1}
                     zoom={96}
+                    markColor={'#F0FDF4'}
                 />
             </div>
         </div>

@@ -2,13 +2,36 @@ import * as React from "react";
 import Moveable from "react-moveable";
 import {useRef, useState} from "react";
 import "../style/Draggable.style.css";
-import Selecto from "react-selecto";
+import {useDispatch, useSelector} from "react-redux";
+import {setSelectedImageIndex, selectedImageScale} from "../store/UploadPageSlice.js";
 
 
 
 export default function Draggable({images}) {
     const moveableRef = useRef(null);
     const targetRef = useRef(null);
+    const selectedImageId = useSelector(state => state.uploadPage.selectedImageIndex);
+    const dispatch = useDispatch();
+
+    function extractScaleValues(transformString) {
+        // Define a regular expression to match the scale values
+        const scaleRegex = /scale\(([^,]+), ([^)]+)\)/;
+
+        // Use the regex to match and extract the scale values
+        const match = transformString.match(scaleRegex);
+
+        if (match) {
+            // match[1] contains the X scale value, and match[2] contains the Y scale value
+            const scaleX = parseFloat(match[1]);
+            const scaleY = parseFloat(match[2]);
+
+            return { scaleX, scaleY };
+        } else {
+            // Return default values if no scale is found
+            return { scaleX: 1, scaleY: 1 };
+        }
+    }
+
 
     const DimensionViewable = {
         name: "dimensionViewable",
@@ -37,15 +60,15 @@ export default function Draggable({images}) {
     }
 
     return (
-        <>
-            <div className="container ml-10" style={{
-                width: "1000px",
-                height: "600px",
+
+            <div className="App ml-[50px] mt-[50px]" style={{
+                width: "1200px",
+                height: "700px",
                 border: "1px solid #ccc",
             }}>
 
                 {images.map((image,i) =>(
-                    <div key={i}>
+                    <div className='flex flex-wrap' key={i} >
                         <div className={"target" + i } ref={targetRef} style={{
                             position: 'absolute',
                             width: '100px',
@@ -57,10 +80,12 @@ export default function Draggable({images}) {
                             color: '#333',
                             border: '1px solid #333',
                             boxSizing: 'border-box',
-                            transform: "translate(0px, 0px) rotate(0deg) scale(1, 1)",
-                            cursor:'pointer'
+                            transform: "translate(0px, 0px) rotate(0deg) scale(" +
+                                (image.scale ? image.scale:'1') + "," +
+                                (image.scale ? image.scale:'1') + ")",
+                            cursor:'pointer',
                         }}>
-                            <img src={image.url} alt="image"  style={{width:'100%',height:'100%'}}/>
+                            <img  src={image.url} alt="image"  style={{width:'100%',height:'100%'}}/>
                         </div>
                         <Moveable
                             target={'.target' + i}
@@ -77,7 +102,7 @@ export default function Draggable({images}) {
                             renderDirections={["nw","n","ne","w","e","sw","s","se"]}
                             rotatable={true}
                             throttleRotate={0}
-                            rotationPosition={"top"}
+                            rotationPosition={'top'}
                             snappable={true}
                             edge={[]}
                             bounds={{"left":0,"top":0,"right":0,"bottom":0,"position":"css"}}
@@ -95,41 +120,22 @@ export default function Draggable({images}) {
                              }}
                             onRender={e => {
                                 e.target.style.transform = e.transform;
+                                dispatch(setSelectedImageIndex(i));
+                                dispatch(selectedImageScale(extractScaleValues(e.target.style.transform).scaleX))
                             }}
-
+                            onClick={e => {
+                                e.target.style.transform = e.transform;
+                                dispatch(setSelectedImageIndex(i));
+                                dispatch(selectedImageScale(extractScaleValues(e.target.style.transform).scaleX))
+                            }}
                         />
 
                     </div>
                 ))}
 
 
-                <Moveable
-                    ref={moveableRef}
-                    target={'.target'}
-                    individualGroupable={true}
-                    draggable={true}
-                    throttleDrag={1}
-                    edgeDraggable={false}
-                    startDragRotate={0}
-                    throttleDragRotate={0}
-                    scalable={true}
-                    keepRatio={false}
-                    throttleScale={0}
-                    snappable={true}
-                    renderDirections={["nw","n","ne","w","e","sw","s","se"]}
-                    bounds={{"left":0,"top":0,"right":0,"bottom":0,"position":"css"}}
-                    onDrag={e => {
-                        e.target.style.transform = e.transform;
-                    }}
-                    onScale={e => {
-                        e.target.style.transform = e.drag.transform;
-                    }}
-                    onRotate={e => {
-                         e.target.style.transform = e.drag.transform;
-                    }}
 
-                />
             </div>
-        </>
+
     );
 }
