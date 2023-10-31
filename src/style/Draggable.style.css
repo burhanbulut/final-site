@@ -19,8 +19,6 @@ body {
     position: absolute;
     width: 100px;
     height: 100px;
-    top: 150px;
-    left: 100px;
     line-height: 100px;
     text-align: center;
     color: #333;
@@ -29,21 +27,13 @@ body {
     box-sizing: border-box;
 }
 
-.target1 {
-    left: 120px;
-    top: 120px;
+
+.active{
+    background: rgb(4, 5, 5)!important;
+    display: none !important;
 }
 
-.target2 {
-    left: 300px;
-    top: 140px;
+.moveable:focus{
+    display: none !important;
+
 }
-
-.target3 {
-    left: 180px;
-    top: 250px;
-}
-
-
-
-

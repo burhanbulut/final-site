@@ -5,20 +5,16 @@ import {useSelector} from "react-redux";
 function ImageUploader({setImage,image}) {
     const [isDragging, setIsDragging] = useState(false);
     const fileInputRef = useRef();
-    const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
     const imageRef = useRef(null);
     const [imageCount,setImageCount] = useState(1);
     const imageIndex = useSelector(state => state.uploadPage.selectedImageIndex);
     const imageScale = useSelector(state => state.uploadPage.selectedImageScale);
 
+
     function selectFiles(){
         fileInputRef.current.click();
     }
-    const handleImageLoad = () => {
-        const { naturalHeight, naturalWidth } = imageRef.current;
-        setImageDimensions({ width: naturalWidth, height: naturalHeight });
-        console.log(imageDimensions)
-    };
+
 
     function onFileSelect(e) {
         const files = e.target.files;
@@ -80,7 +76,7 @@ function ImageUploader({setImage,image}) {
     function addImageList(e){
         setImageCount(imageCount + 1);
         const files = e.target;
-
+        console.log(e.target);
         setImage((prevImages) => [
             ...prevImages,
             {
@@ -129,7 +125,7 @@ function ImageUploader({setImage,image}) {
                         image.map((image,i) =>(
                                 <div className='image' key={i}>
                                     <span className='delete' onClick={() =>deleteImage(i)} >&times;</span>
-                                    <img id={image.id} onClick={addImageList}  src={image.url} alt={image.name} ref={imageRef} onLoad={handleImageLoad} />
+                                    <img id={image.id} onClick={addImageList}  src={image.url} alt={image.name} ref={imageRef} />
                                 </div>
                             )
 
@@ -138,7 +134,7 @@ function ImageUploader({setImage,image}) {
 
                 </div>
                 <div>
-                    <button className='btn mt-[300px]' onClick={ () =>{
+                    <button className='btn ' onClick={ () =>{
                         let temp = image[imageIndex];
                         setImageCount(imageCount + 1);
                         temp.id = imageCount +1;

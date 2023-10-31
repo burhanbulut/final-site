@@ -4,7 +4,7 @@ import {useRef, useState} from "react";
 import "../style/Draggable.style.css";
 import {useDispatch, useSelector} from "react-redux";
 import {setSelectedImageIndex, selectedImageScale} from "../store/UploadPageSlice.js";
-
+import canvas from '../assets/canvas-bg.png'
 
 
 export default function Draggable({images}) {
@@ -12,6 +12,13 @@ export default function Draggable({images}) {
     const targetRef = useRef(null);
     const selectedImageId = useSelector(state => state.uploadPage.selectedImageIndex);
     const dispatch = useDispatch();
+    const [activeClass, setActiveClass] = React.useState(true);
+    let changeClass = () => {
+        setActiveClass(!activeClass)
+    }
+    let toggleActive = activeClass ? "active" : '';
+
+
 
     function extractScaleValues(transformString) {
         // Define a regular expression to match the scale values
@@ -65,16 +72,15 @@ export default function Draggable({images}) {
                 width: "1200px",
                 height: "700px",
                 border: "1px solid #ccc",
+                 backgroundImage: `url(${canvas})`,
             }}>
 
                 {images.map((image,i) =>(
-                    <div className='flex flex-wrap' key={i} >
-                        <div className={"target" + i } ref={targetRef} style={{
+                    <div className='' key={i} >
+                        <div className={`target${i} `} ref={targetRef} style={{
                             position: 'absolute',
                             width: '100px',
                             height: '100px',
-                            top: '150px',
-                            left: '100px',
                             lineHeight: '100px',
                             textAlign: 'center',
                             color: '#333',
@@ -88,6 +94,7 @@ export default function Draggable({images}) {
                             <img  src={image.url} alt="image"  style={{width:'100%',height:'100%'}}/>
                         </div>
                         <Moveable
+                            className={`moveable`}
                             target={'.target' + i}
                             draggable={true}
                             ables={[DimensionViewable]}
@@ -122,11 +129,15 @@ export default function Draggable({images}) {
                                 e.target.style.transform = e.transform;
                                 dispatch(setSelectedImageIndex(i));
                                 dispatch(selectedImageScale(extractScaleValues(e.target.style.transform).scaleX))
+                                console.log(extractScaleValues(e.target.style.transform).scaleX * 100);
+
                             }}
                             onClick={e => {
                                 e.target.style.transform = e.transform;
                                 dispatch(setSelectedImageIndex(i));
                                 dispatch(selectedImageScale(extractScaleValues(e.target.style.transform).scaleX))
+
+
                             }}
                         />
 

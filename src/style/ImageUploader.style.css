@@ -6,7 +6,7 @@
 
 .card{
     padding: 10px;
-    box-shadow: 0 0 5px #ffdfdf;
+
     overflow: hidden;
     margin-right: 2.5rem;
     margin-top: 4rem;
@@ -18,7 +18,7 @@
 
 .card p{
     font-weight: bold;
-    color: #0086fe
+    color: #0c0d0e
 }
 .card button{
     outline: 0;
@@ -29,15 +29,19 @@
     font-weight: 400;
     padding: 8px 13px;
     width: 50%;
-    background: #0086fe;
+    background: #16A34A;
 
+}
+
+.card button:hover{
+    opacity: 0.8;
 }
 
 .card .drag-area{
     height: 150px;
     border-radius: 5px;
-    border: 2px dashed #0086fe;
-    color : #0086fe;
+    border: 2px dashed #111213;
+    color : #100e0e;
     background: #f4f3f9;
     display: flex;
     justify-content: center;
@@ -45,6 +49,7 @@
     user-select: none;
     -webkit-user-select: none;
     margin-top: 10px;
+    margin-bottom: 120px;
 }
 
 .card .drag-area .visible{

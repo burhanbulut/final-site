@@ -18,12 +18,12 @@ const [images,setImages] = useState([]);
         <div>
             <Navbar/>
         </div>
-        <div className='flex h-full'>
+        <div className='flex h-full bg-green-100'>
             <div className='inline w-[400px] '>
                 <ImageUploader  setImage={setImages} image={images}/>
 
             </div>
-            <div className='w-full flex-1'>
+            <div className='w-full flex-1 ml-2'>
                 <EditPage  setImages={setImages}  />
                 <Canvas images={images}/>
             </div>
