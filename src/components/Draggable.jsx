@@ -2,9 +2,17 @@ import * as React from "react";
 import Moveable from "react-moveable";
 import {useRef, useState} from "react";
 import "../style/Draggable.style.css";
-import {useDispatch, useSelector} from "react-redux";
-import {setSelectedImageIndex, selectedImageScale} from "../store/UploadPageSlice.js";
+import {useDispatch, useSelector,} from "react-redux";
+import {
+    setSelectedImageIndex,
+    selectedImageScale,
+    setImageList,
+    changeScaleByImageId,
+    newMargin
+} from "../store/UploadPageSlice.js";
 import canvas from '../assets/canvas-bg.png'
+import { flushSync } from "react-dom";
+
 
 
 export default function Draggable({images}) {
@@ -13,11 +21,7 @@ export default function Draggable({images}) {
     const selectedImageId = useSelector(state => state.uploadPage.selectedImageIndex);
     const dispatch = useDispatch();
     const [activeClass, setActiveClass] = React.useState(true);
-    let changeClass = () => {
-        setActiveClass(!activeClass)
-    }
-    let toggleActive = activeClass ? "active" : '';
-
+    const imageMargin = useSelector(state => state.uploadPage.newMargin);
 
 
     function extractScaleValues(transformString) {
@@ -66,35 +70,33 @@ export default function Draggable({images}) {
         },
     }
 
+
+
     return (
 
-            <div className="App ml-[50px] mt-[50px]" style={{
+            <div className="App ml-[25px] mt-[25px] flex flex-wrap" style={{
                 width: "1200px",
                 height: "700px",
-                border: "1px solid #ccc",
-                 backgroundImage: `url(${canvas})`,
+                border: '1px dashed #1f3f8f',
+                backgroundImage: `url(${canvas})`,
             }}>
 
                 {images.map((image,i) =>(
-                    <div className='' key={i} >
-                        <div className={`target${i} `} ref={targetRef} style={{
-                            position: 'absolute',
-                            width: '100px',
-                            height: '100px',
-                            lineHeight: '100px',
-                            textAlign: 'center',
-                            color: '#333',
-                            border: '1px solid #333',
-                            boxSizing: 'border-box',
+                    <>
+                        <div className={`target${i}`} key={i} ref={targetRef} id={image.id}  style={{
+                            width: '96px',
+                            height: '96px',
+                            margin: `${imageMargin * 10}px`,
                             transform: "translate(0px, 0px) rotate(0deg) scale(" +
                                 (image.scale ? image.scale:'1') + "," +
                                 (image.scale ? image.scale:'1') + ")",
                             cursor:'pointer',
                         }}>
-                            <img  src={image.url} alt="image"  style={{width:'100%',height:'100%'}}/>
+                            <img  src={image.url} alt="image" id={image.id} style={{width:'100%',height:'100%'}}/>
                         </div>
                         <Moveable
                             className={`moveable`}
+                            flushSync={flushSync}
                             target={'.target' + i}
                             draggable={true}
                             ables={[DimensionViewable]}
@@ -124,24 +126,31 @@ export default function Draggable({images}) {
                                  e.target.style.width = `${e.width}px`;
                                  e.target.style.height = `${e.height}px`;
                                  e.target.style.transform = e.drag.transform;
+
                              }}
                             onRender={e => {
+
                                 e.target.style.transform = e.transform;
                                 dispatch(setSelectedImageIndex(i));
                                 dispatch(selectedImageScale(extractScaleValues(e.target.style.transform).scaleX))
-                                console.log(extractScaleValues(e.target.style.transform).scaleX * 100);
-
+                                dispatch(changeScaleByImageId({id:image.id,scale:extractScaleValues(e.target.style.transform).scaleX}))
                             }}
                             onClick={e => {
                                 e.target.style.transform = e.transform;
                                 dispatch(setSelectedImageIndex(i));
                                 dispatch(selectedImageScale(extractScaleValues(e.target.style.transform).scaleX))
-
+                                console.log(dispatch(setImageList({
+                                    index: i,
+                                    url: image.url,
+                                    size: extractScaleValues(e.target.style.transform).scaleX
+                                })));
 
                             }}
+
+
                         />
 
-                    </div>
+                    </>
                 ))}
 
 

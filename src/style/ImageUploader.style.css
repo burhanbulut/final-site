@@ -6,7 +6,6 @@
 
 .card{
     padding: 10px;
-
     overflow: hidden;
     margin-right: 2.5rem;
     margin-top: 4rem;
@@ -29,7 +28,7 @@
     font-weight: 400;
     padding: 8px 13px;
     width: 50%;
-    background: #16A34A;
+    background: rgb(0, 0, 0);
 
 }
 
@@ -56,10 +55,11 @@
     font-size: 18px;
 }
 .card .select{
-    color: #5256ad;
+    color: #f31515;
     margin-left: 5px;
     cursor: pointer;
     transition: 0.4s;
+    font-weight: bold;
 }
 
 .card .select:hover{

@@ -4,6 +4,9 @@ const initialState = {
     selectedImageIndex: 0,
     selectedImageScale: 1,
     imagecount: 1,
+    imageList: [],
+    imageMargin: 0.5,
+    newMargin:0,
 }
 
 export const UploadPageSlice = createSlice({
@@ -18,10 +21,30 @@ export const UploadPageSlice = createSlice({
         },
         setImageCount: (state, action) => {
             state.imagecount = action.payload
-        }
+        },
+        setImageList: (state, action) => {
+            state.imageList = [action.payload, ...state.imageList]
+        },
+        addElement: (state, action) => {
+            state.imageList = [...state.imageList, action.payload]
+        },
+       changeScaleByImageId: (state, action) => {
+           for (let i = 0; i < state.imageList.length; i++) {
+               if (state.imageList[i].id === action.payload.id) {
+                   state.imageList[i].scale = action.payload.scale
+               }
+           }
+        },
+        setImageMargin: (state, action) => {
+            state.imageMargin = action.payload
+            console.log(state.imageMargin);
 
+        },
+        newMargin: (state, action) => {
+            state.newMargin = action.payload
+        }
     }
 })
 
-export const {setSelectedImageIndex,selectedImageScale,setImageCount} = UploadPageSlice.actions
+export const {newMargin,setImageMargin,changeScaleByImageId,addElement,setSelectedImageIndex,selectedImageScale,setImageCount,setImageList} = UploadPageSlice.actions
 export default UploadPageSlice.reducer

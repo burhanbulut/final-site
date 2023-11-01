@@ -25,18 +25,22 @@ export default function GuideLine() {
                 <Guides
                     ref={horizonalGuidesRef}
                     type="horizontal"
+                    height={30}
+                    width={1200}
+                    textOffset={[0, 5]}
+                    font={'15px sans-serif'}
                     rulerStyle={{
-                        left: "30px",
+                        left: "25px",
                         width: "calc(100% - 30px)",
                         height: "100%",
-
-
                     }}
                     displayDragPos={true}
                     displayGuidePos={true}
                     useResizeObserver={true}
                     unit={1}
                     zoom={96}
+                    backgroundColor={'#F0FDF4'}
+                    textColor={'#777F8A'}
 
                 />
             </div>
@@ -45,8 +49,12 @@ export default function GuideLine() {
                 <Guides
                     ref={verticalGuidesRef}
                     type="vertical"
+                    height={1200}
+                    width={30}
+                    textOffset={[5, 0]}
+                    font={'15px sans-serif'}
                     rulerStyle={{
-                        top: "30px",
+                        top: "25px",
                         height: "calc(100% - 30px)",
                         width: "100%",
                     }}
@@ -56,6 +64,10 @@ export default function GuideLine() {
                     unit={1}
                     zoom={96}
                     markColor={'#F0FDF4'}
+                    backgroundColor={'#F0FDF4'}
+                    textColor={'#777F8A'}
+                    negativeRuler={false}
+
                 />
             </div>
         </div>

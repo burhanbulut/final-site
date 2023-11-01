@@ -1,16 +1,17 @@
 import React, {useRef, useState} from 'react'
 import '../style/ImageUploader.style.css'
-import {useSelector} from "react-redux";
-
+import {useDispatch, useSelector} from "react-redux";
+import { addElement, newMargin,setImageMargin} from '../store/UploadPageSlice.js'
+import {nanoid} from "nanoid";
 function ImageUploader({setImage,image}) {
     const [isDragging, setIsDragging] = useState(false);
     const fileInputRef = useRef();
     const imageRef = useRef(null);
     const [imageCount,setImageCount] = useState(1);
     const imageIndex = useSelector(state => state.uploadPage.selectedImageIndex);
-    const imageScale = useSelector(state => state.uploadPage.selectedImageScale);
-
-
+    const dispatch = useDispatch();
+    const newMarginValue = useSelector(state => state.uploadPage.newMargin);
+    const marginButtonValue = useSelector(state => state.uploadPage.setImageMargin);
     function selectFiles(){
         fileInputRef.current.click();
     }
@@ -21,14 +22,23 @@ function ImageUploader({setImage,image}) {
         setImageCount(imageCount + 1);
         if (!files || files.length === 0) return;
         const imageFiles = Array.from(files).filter(file => file.type.startsWith('image/'));
+        const id = nanoid();
+        imageFiles.map((file, i) => (
+            dispatch(addElement({
+            name: file.name,
+            url: URL.createObjectURL(file),
+            id: id,
+            scale: 1,
+        }))
 
+        ))
 
         setImage(prevImages => [
             ...prevImages,
             ...imageFiles.map((file, i) => ({
                 name: file.name,
                 url: URL.createObjectURL(file),
-                id: imageCount,
+                id: id,
 
             })),
         ]);
@@ -54,9 +64,18 @@ function ImageUploader({setImage,image}) {
         setImageCount(imageCount + 1);
         setIsDragging(false);
         const files = e.dataTransfer.files;
+        const id = nanoid();
         for (let i=0;i <files.length;i++){
             if(files[i].type.split('/')[0] !== 'image') continue;
             // if (!images.some((e) =>e.name == files[i].name)){
+
+                dispatch(addElement({
+                    name: files[i].name,
+                    url: URL.createObjectURL(files[i]),
+                    id:id,
+                    scale: 1,
+                }))
+
 
 
             setImage((prevImages) => [
@@ -64,7 +83,7 @@ function ImageUploader({setImage,image}) {
                 {
                     name: files[i].name,
                     url:  URL.createObjectURL(files[i]),
-                    id:   imageCount,
+                    id:   id,
 
                 },
 
@@ -76,13 +95,20 @@ function ImageUploader({setImage,image}) {
     function addImageList(e){
         setImageCount(imageCount + 1);
         const files = e.target;
-        console.log(e.target);
+        const id = nanoid();
+        dispatch(addElement({
+            name: files.name,
+            url: files.src,
+            id:id,
+            scale: 1,
+        }))
+        console.log(dispatch(newMargin(newMarginValue)));
         setImage((prevImages) => [
             ...prevImages,
             {
                 name: files.name,
                 url:  files.src,
-                id:    imageCount,
+                id:    id,
 
             }])
 

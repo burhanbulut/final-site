@@ -27,13 +27,27 @@ body {
     box-sizing: border-box;
 }
 
-
-.active{
-    background: rgb(4, 5, 5)!important;
-    display: none !important;
+.moveable-normal.red {
+background: red !important;
 }
 
-.moveable:focus{
-    display: none !important;
+.moveable-gap.red {
+background: red !important;
+}
 
+.moveable-bold.red {
+background: red !important;
+}
+
+.moveable-dashed.red {
+border-top-color: red !important;
+border-left-color: red !important;
+}
+
+.moveable-normal.green {
+background: green !important;
+}
+
+.moveable-gap.green {
+background: green !important;
 }

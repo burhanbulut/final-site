@@ -33,11 +33,11 @@ a {
 .ruler.horizontal {
     left: 0px;
     width: 65%;
-    height: 30px;
+    height: 20px;
 }
 .ruler.vertical {
     top: 0px;
-    width: 30px;
+    width: 20px;
     height: 80%;
 }
 .box {
