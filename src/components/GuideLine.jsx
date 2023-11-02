@@ -26,9 +26,9 @@ export default function GuideLine() {
                     ref={horizonalGuidesRef}
                     type="horizontal"
                     height={30}
-                    width={1200}
+                    width={1300}
                     textOffset={[0, 5]}
-                    font={'15px sans-serif'}
+                    font={'14px sans-serif'}
                     rulerStyle={{
                         left: "25px",
                         width: "calc(100% - 30px)",
@@ -41,6 +41,7 @@ export default function GuideLine() {
                     zoom={96}
                     backgroundColor={'#F0FDF4'}
                     textColor={'#777F8A'}
+                    scrollPos={0}
 
                 />
             </div>
@@ -67,6 +68,7 @@ export default function GuideLine() {
                     backgroundColor={'#F0FDF4'}
                     textColor={'#777F8A'}
                     negativeRuler={false}
+
 
                 />
             </div>

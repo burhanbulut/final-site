@@ -2,8 +2,6 @@ import React from 'react'
 import {AiOutlineSave} from 'react-icons/ai'
 import Logo from '../style/logo.jpg'
 import '../style/Navbar.style.css'
-import axios from "axios";
-import fs from "fs";
 import {useSelector} from "react-redux";
 
 function Navbar({images}) {
@@ -14,7 +12,9 @@ function Navbar({images}) {
         <nav >
             <div className='flex justify-between border-b-2 h-[65px] navbar'>
                 <div className='flex items-center justify-center '>
-                    <img src={Logo} alt='logo' className='h-[50px] w-[50px] ml-6 rounded-full'/>
+                   <div className='h-[50px] w-[50px] ml-6 rounded-full border-black border-2'>
+
+                   </div>
                     <span className='ml-2 font-bold text-black'>Company Name</span>
                 </div>
                 <div className='mr-10 flex align-middle items-center save-hover '>

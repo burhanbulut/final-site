@@ -8,7 +8,7 @@ import {
     selectedImageScale,
     setImageList,
     changeScaleByImageId,
-    newMargin
+
 } from "../store/UploadPageSlice.js";
 import canvas from '../assets/canvas-bg.png'
 import { flushSync } from "react-dom";
@@ -18,12 +18,11 @@ import { flushSync } from "react-dom";
 export default function Draggable({images}) {
     const moveableRef = useRef(null);
     const targetRef = useRef(null);
+    const canvasRef = useRef(null);
     const selectedImageId = useSelector(state => state.uploadPage.selectedImageIndex);
     const dispatch = useDispatch();
     const [activeClass, setActiveClass] = React.useState(true);
-    const imageMargin = useSelector(state => state.uploadPage.newMargin);
-
-
+    const imageMargin = useSelector(state => state.uploadPage.imageMargin);
     function extractScaleValues(transformString) {
         // Define a regular expression to match the scale values
         const scaleRegex = /scale\(([^,]+), ([^)]+)\)/;
@@ -69,23 +68,33 @@ export default function Draggable({images}) {
             </div>;
         },
     }
+    const saveImageToLocal = (event) =>{
+        let link = event.currentTarget;
+        link.setAttribute('download', 'canvas.png');
+        let image = canvasRef[0].current.toDataURL('image/png')
+        link.setAttribute('href', image);
 
+    }
 
 
     return (
 
-            <div className="App ml-[25px] mt-[25px] flex flex-wrap" style={{
+            <div className="App ml-[25px] mt-[25px] flex flex-wrap" ref={canvasRef}  style={{
                 width: "1200px",
                 height: "700px",
                 border: '1px dashed #1f3f8f',
                 backgroundImage: `url(${canvas})`,
             }}>
-
+                <div className='z-30'>
+                <a id='download_image_link' href='download_link' onClick={saveImageToLocal}>download image</a>
+                </div>
                 {images.map((image,i) =>(
-                    <>
-                        <div className={`target${i}`} key={i} ref={targetRef} id={image.id}  style={{
+                    <div key={i} className=''>
+                        <div className={`target${i} box-border`}  ref={targetRef} id={image.id}  style={{
                             width: '96px',
                             height: '96px',
+                            position: 'relative',
+                            boxSizing: 'border-box',
                             margin: `${imageMargin * 10}px`,
                             transform: "translate(0px, 0px) rotate(0deg) scale(" +
                                 (image.scale ? image.scale:'1') + "," +
@@ -126,10 +135,8 @@ export default function Draggable({images}) {
                                  e.target.style.width = `${e.width}px`;
                                  e.target.style.height = `${e.height}px`;
                                  e.target.style.transform = e.drag.transform;
-
                              }}
                             onRender={e => {
-
                                 e.target.style.transform = e.transform;
                                 dispatch(setSelectedImageIndex(i));
                                 dispatch(selectedImageScale(extractScaleValues(e.target.style.transform).scaleX))
@@ -139,21 +146,13 @@ export default function Draggable({images}) {
                                 e.target.style.transform = e.transform;
                                 dispatch(setSelectedImageIndex(i));
                                 dispatch(selectedImageScale(extractScaleValues(e.target.style.transform).scaleX))
-                                console.log(dispatch(setImageList({
-                                    index: i,
-                                    url: image.url,
-                                    size: extractScaleValues(e.target.style.transform).scaleX
-                                })));
-
                             }}
 
 
                         />
 
-                    </>
+                    </div>
                 ))}
-
-
 
             </div>
 

@@ -1,7 +1,7 @@
 import React, {useRef, useState} from 'react'
 import '../style/ImageUploader.style.css'
 import {useDispatch, useSelector} from "react-redux";
-import { addElement, newMargin,setImageMargin} from '../store/UploadPageSlice.js'
+import { addElement} from '../store/UploadPageSlice.js'
 import {nanoid} from "nanoid";
 function ImageUploader({setImage,image}) {
     const [isDragging, setIsDragging] = useState(false);
@@ -10,8 +10,10 @@ function ImageUploader({setImage,image}) {
     const [imageCount,setImageCount] = useState(1);
     const imageIndex = useSelector(state => state.uploadPage.selectedImageIndex);
     const dispatch = useDispatch();
-    const newMarginValue = useSelector(state => state.uploadPage.newMargin);
-    const marginButtonValue = useSelector(state => state.uploadPage.setImageMargin);
+    const imageScale = useSelector(state => state.uploadPage.selectedImageScale);
+
+
+
     function selectFiles(){
         fileInputRef.current.click();
     }
@@ -102,7 +104,7 @@ function ImageUploader({setImage,image}) {
             id:id,
             scale: 1,
         }))
-        console.log(dispatch(newMargin(newMarginValue)));
+
         setImage((prevImages) => [
             ...prevImages,
             {
@@ -146,7 +148,7 @@ function ImageUploader({setImage,image}) {
 
                     <input name='file' type='file'  className='file' multiple ref={fileInputRef}  onChange={onFileSelect} />
                 </div>
-                <div className='container'>
+                <div className='container cursor-pointer'>
                     {
                         image.map((image,i) =>(
                                 <div className='image' key={i}>
