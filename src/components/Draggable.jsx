@@ -1,160 +1,216 @@
 import * as React from "react";
-import Moveable from "react-moveable";
-import {useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import "../style/Draggable.style.css";
 import {useDispatch, useSelector,} from "react-redux";
 import {
-    setSelectedImageIndex,
-    selectedImageScale,
-    setImageList,
-    changeScaleByImageId,
-
+    setImageCanvas, selectedImageScale, setCopyFunction, setPasteFunction
 } from "../store/UploadPageSlice.js";
-import canvas from '../assets/canvas-bg.png'
-import { flushSync } from "react-dom";
-
+import canvas1 from '../assets/canvas-bg.png'
+import {fabric} from "fabric";
 
 
 export default function Draggable({images}) {
-    const moveableRef = useRef(null);
-    const targetRef = useRef(null);
+
     const canvasRef = useRef(null);
     const selectedImageId = useSelector(state => state.uploadPage.selectedImageIndex);
     const dispatch = useDispatch();
-    const [activeClass, setActiveClass] = React.useState(true);
     const imageMargin = useSelector(state => state.uploadPage.imageMargin);
-    function extractScaleValues(transformString) {
-        // Define a regular expression to match the scale values
-        const scaleRegex = /scale\(([^,]+), ([^)]+)\)/;
+    const imagePositions = useRef({});
+    const [currentClipboard, setCurrentClipboard] = useState(null);
+    const [currentCanvas, setCurrentCanvas] = useState(null);
+    const newCanvas = useRef(null);
+    const newClipboard = useRef(null);
 
-        // Use the regex to match and extract the scale values
-        const match = transformString.match(scaleRegex);
-
-        if (match) {
-            // match[1] contains the X scale value, and match[2] contains the Y scale value
-            const scaleX = parseFloat(match[1]);
-            const scaleY = parseFloat(match[2]);
-
-            return { scaleX, scaleY };
-        } else {
-            // Return default values if no scale is found
-            return { scaleX: 1, scaleY: 1 };
+    function Copy() {
+        if (newCanvas.current === null) {
+            return;
         }
+
+        newCanvas.current.getActiveObject().clone(function (cloned) {
+            newClipboard.current = cloned
+        });
+    }
+
+    function Paste() {
+        if (newCanvas.current === null) {
+            return;
+        }
+
+
+        newCanvas.current.getActiveObject().clone(function (cloned) {
+            newClipboard.current = cloned
+        });
+
+        // clone again, so you can do multiple copies.
+        newClipboard.current.clone(function (clonedObj) {
+            newCanvas.current.discardActiveObject();
+            console.log(clonedObj)
+            clonedObj.set({
+                left: clonedObj.left + 10,
+                top: clonedObj.top + 10,
+                evented: true,
+            });
+            if (clonedObj.type === 'activeSelection') {
+                // active selection needs a reference to the canvas.
+                clonedObj.canvas =  newCanvas.current;
+                clonedObj.forEachObject(function (obj) {
+                    newCanvas.current.add(obj);
+                });
+                // this should solve the unselectability
+                clonedObj.setCoords();
+            } else {
+                newCanvas.current.add(clonedObj);
+            }
+            newClipboard.current.top += 10;
+            newClipboard.current.left += 10;
+
+            newCanvas.current.setActiveObject(clonedObj);
+            newCanvas.current.requestRenderAll();
+        });
     }
 
 
-    const DimensionViewable = {
-        name: "dimensionViewable",
-        props: [],
-        events: [],
-        render(moveable, React) {
-            const rect = moveable.getRect();
+    useEffect(() => {
 
-            return <div key={"dimension-viewer"} className={"moveable-dimension"} style={{
-                position: "absolute",
-                left: `${rect.width / 2}px`,
-                top: `${rect.height + 20}px`,
-                background: "#4af",
-                borderRadius: "2px",
-                padding: "2px 4px",
-                color: "white",
-                fontSize: "13px",
-                whiteSpace: "nowrap",
-                fontWeight: "bold",
-                willChange: "transform",
-                transform: `translate(-50%, 0px)`,
-            }}>
-                {(rect.width.toFixed(2) / 96).toFixed(2)} x {(rect.height.toFixed(2) / 96).toFixed(2)}
-            </div>;
-        },
-    }
-    const saveImageToLocal = (event) =>{
-        let link = event.currentTarget;
-        link.setAttribute('download', 'canvas.png');
-        let image = canvasRef[0].current.toDataURL('image/png')
-        link.setAttribute('href', image);
+        const canvas = new fabric.Canvas(canvasRef.current);
+        newCanvas.current = canvas;
+        dispatch(setPasteFunction(Paste));
+        dispatch(setCopyFunction(Copy));
+        canvas.setBackgroundImage(canvas1, canvas.renderAll.bind(canvas))
 
-    }
+        canvas.clear();
+        let currentX = 10;
+        let currentY = 10;
+
+
+        // setImageCounter(images.length)
+        //  console.log('useEffect',imageCounter)
+        //  let obj = {}
+        //  if (images.length === 0) {
+        //      return;
+        //  }
+        //  let options = {
+        //              left: 50 * imageCounter * imageMargin *3,
+        //              top: 10,
+        //              scaleX: 0.5,
+        //              scaleY: 0.5,
+        //          }
+        //  fabric.Image.fromURL(images[imageCounter].url, (img) => {
+        //
+        //      img.set({...options, borderColor: 'gray',
+        //          cornerColor: 'black',
+        //          cornerSize: 12,
+        //          transparentCorners: false,
+        //          objectFit: 'fit'
+        //      })
+        //
+        //      img.on('scaling', function (event) {
+        //          // changeScaleAtIndexOnImagePosition(index, img.scaleX);
+        //          console.log(imagePositions)
+        //          console.log('Image is being scaled');
+        //          console.log('New scale factor: ', img.scaleX); // Access the new scale factor
+        //
+        //      });
+        //
+        //      img.on('moving', function (event) {
+        //          //changePositionAtIndexOnImagePosition(index, img);
+        //          console.log(imagePositions);
+        //          console.log('Image is being dragged');
+        //          console.log('New position: ', img.left); // Access the new position
+        //
+        //      });
+        //
+        //      editor?.canvas.add(img);
+        //  });
+        images.map((image, index) => {
+            let obj = null
+            if (imagePositions.current.hasOwnProperty(index)) {
+                obj = imagePositions.current[index];
+
+            }
+            const img = new Image();
+            img.src = image.url;
+            img.onload = () => {
+                let desiredWidth = 100;
+                let desiredHeight = 100;
+
+
+                if (currentX + desiredWidth > canvas.width) {
+                    currentX = 10;
+                    currentY += desiredHeight + 10;
+                }
+
+                if (currentY + desiredHeight <= canvas.height) {
+                    const finalImage = new fabric.Image(img, {
+                        borderColor: 'gray',
+                        cornerColor: 'black',
+                        cornerSize: 12,
+                        transparentCorners: false,
+                        left: obj?.left || currentX,
+                        top: obj?.top || currentY,
+                    });
+
+                    const scaleX = desiredWidth / finalImage.width;
+                    const scaleY = desiredHeight / finalImage.height;
+                    console.log(image.scale)
+                    finalImage.scaleX = image.scale ? image.scale : (obj?.scaleX || scaleX);
+                    finalImage.scaleY = image.scale ? image.scale : (obj?.scaleY || scaleY);
+
+                    imagePositions.current[index] = {
+                        left: obj?.left || currentX,
+                        top: obj?.top || currentY,
+                        scaleX: obj?.scaleX || scaleX,
+                        scaleY: obj?.scaleY || scaleY,
+                    };
+
+
+                    canvas.add(finalImage);
+                    currentX += desiredWidth + 10;
+
+                    finalImage.on('selected', (event) => {
+                        console.log('selected', finalImage.scaleX)
+                        dispatch(selectedImageScale(finalImage.scaleX));
+                    });
+                    finalImage.on('scaling', (event) => {
+                        const newScaleY = obj?.scaleY || finalImage.scaleY;
+                        imagePositions.current[index].scaleY = newScaleY;
+                        const newScaleX = obj?.scaleX || finalImage.scaleX;
+                        imagePositions.current[index].scaleX = newScaleX;
+
+                    });
+
+                    finalImage.on('moving', (event) => {
+                        const newLeft = finalImage.left;
+                        const newTop = finalImage.top;
+                        imagePositions.current[index].left = newLeft;
+                        imagePositions.current[index].top = newTop;
+                        // You can do more with the new position if needed
+                    });
+
+                }
+            }
+        });
+
+
+        dispatch(setImageCanvas(canvas));
+        setCurrentCanvas(canvas)
+        return () => {
+            canvas.dispose();
+        };
+
+    }, [images]);
 
 
     return (
 
-            <div className="App ml-[25px] mt-[25px] flex flex-wrap" ref={canvasRef}  style={{
-                width: "1200px",
-                height: "700px",
+        <>
+
+            <canvas ref={canvasRef} width={900} height={700} className='ml-[25px] mt-[25px] flex flex-wrap' style={{
                 border: '1px dashed #1f3f8f',
-                backgroundImage: `url(${canvas})`,
-            }}>
-                <div className='z-30'>
-                <a id='download_image_link' href='download_link' onClick={saveImageToLocal}>download image</a>
-                </div>
-                {images.map((image,i) =>(
-                    <div key={i} className=''>
-                        <div className={`target${i} box-border`}  ref={targetRef} id={image.id}  style={{
-                            width: '96px',
-                            height: '96px',
-                            position: 'relative',
-                            boxSizing: 'border-box',
-                            margin: `${imageMargin * 10}px`,
-                            transform: "translate(0px, 0px) rotate(0deg) scale(" +
-                                (image.scale ? image.scale:'1') + "," +
-                                (image.scale ? image.scale:'1') + ")",
-                            cursor:'pointer',
-                        }}>
-                            <img  src={image.url} alt="image" id={image.id} style={{width:'100%',height:'100%'}}/>
-                        </div>
-                        <Moveable
-                            className={`moveable`}
-                            flushSync={flushSync}
-                            target={'.target' + i}
-                            draggable={true}
-                            ables={[DimensionViewable]}
-                            throttleDrag={1}
-                            pinchable={true}
-                            edgeDraggable={false}
-                            startDragRotate={0}
-                            throttleDragRotate={0}
-                            scalable={true}
-                            keepRatio={true}
-                            throttleScale={0}
-                            renderDirections={["nw","n","ne","w","e","sw","s","se"]}
-                            rotatable={true}
-                            throttleRotate={0}
-                            rotationPosition={'top'}
-                            snappable={true}
-                            edge={[]}
-                            bounds={{"left":0,"top":0,"right":0,"bottom":0,"position":"css"}}
-                            snapDirections={{"top":true,"left":true,"bottom":true,"right":true}}
-                            snapThreshold={5}
-                            verticalGuidelines={[50,150,250,450,550]}
-                            horizontalGuidelines={[0,100,200,400,500]}
-                            props={{
-                                dimensionViewable: true,
-                            }}
-                            onResize={e => {
-                                 e.target.style.width = `${e.width}px`;
-                                 e.target.style.height = `${e.height}px`;
-                                 e.target.style.transform = e.drag.transform;
-                             }}
-                            onRender={e => {
-                                e.target.style.transform = e.transform;
-                                dispatch(setSelectedImageIndex(i));
-                                dispatch(selectedImageScale(extractScaleValues(e.target.style.transform).scaleX))
-                                dispatch(changeScaleByImageId({id:image.id,scale:extractScaleValues(e.target.style.transform).scaleX}))
-                            }}
-                            onClick={e => {
-                                e.target.style.transform = e.transform;
-                                dispatch(setSelectedImageIndex(i));
-                                dispatch(selectedImageScale(extractScaleValues(e.target.style.transform).scaleX))
-                            }}
+            }}/>
 
 
-                        />
-
-                    </div>
-                ))}
-
-            </div>
-
+        </>
     );
 }
+

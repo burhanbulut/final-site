@@ -1,12 +1,11 @@
 import React from 'react'
 import Draggable from "./Draggable.jsx";
 import GuideLine from "./GuideLine.jsx";
-function Canvas({images}) {
+function Canvas({images ,setPasteFunction,setCopyFunction}) {
     return (
-        <div className='flex'>
-
+        <div className='flex flex-wrap'>
             <GuideLine />
-            <Draggable images={images} />
+            <Draggable setPasteFunction={setPasteFunction} setCopyFunction={setCopyFunction} images={images} />
         </div>
     )
 }

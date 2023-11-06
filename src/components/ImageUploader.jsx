@@ -1,9 +1,11 @@
 import React, {useRef, useState} from 'react'
 import '../style/ImageUploader.style.css'
 import {useDispatch, useSelector} from "react-redux";
-import { addElement} from '../store/UploadPageSlice.js'
+import {addElement, selectedImageScale} from '../store/UploadPageSlice.js'
 import {nanoid} from "nanoid";
-function ImageUploader({setImage,image}) {
+
+
+function ImageUploader({setImage,image,copyFunction,pasteFunction}) {
     const [isDragging, setIsDragging] = useState(false);
     const fileInputRef = useRef();
     const imageRef = useRef(null);
@@ -11,8 +13,8 @@ function ImageUploader({setImage,image}) {
     const imageIndex = useSelector(state => state.uploadPage.selectedImageIndex);
     const dispatch = useDispatch();
     const imageScale = useSelector(state => state.uploadPage.selectedImageScale);
-
-
+    const kopyala = useSelector(state => state.uploadPage.copyFunction);
+    const yapi = useSelector(state => state.uploadPage.pasteFunction);
 
     function selectFiles(){
         fileInputRef.current.click();
@@ -79,7 +81,6 @@ function ImageUploader({setImage,image}) {
                 }))
 
 
-
             setImage((prevImages) => [
                 ...prevImages,
                 {
@@ -113,6 +114,7 @@ function ImageUploader({setImage,image}) {
                 id:    id,
 
             }])
+
 
     }
     function removeImages(){
@@ -162,21 +164,24 @@ function ImageUploader({setImage,image}) {
 
                 </div>
                 <div>
-                    <button className='btn ' onClick={ () =>{
-                        let temp = image[imageIndex];
-                        setImageCount(imageCount + 1);
-                        temp.id = imageCount +1;
-                        setImage((prevImages) => [
-                            ...prevImages,
-                            {
-                                name: temp.name,
-                                url:  temp.url,
-                                id:  imageCount  + 1,
-                                scale: imageScale,
+                    {/*<button className='btn ' onClick={ () =>{*/}
 
-                            }])
-                    }
-                    }>Duplicate</button>
+                    {/*    let temp = image[imageIndex];*/}
+                    {/*    setImageCount(imageCount + 1);*/}
+                    {/*    temp.id = imageCount +1;*/}
+                    {/*    setImage((prevImages) => [*/}
+                    {/*        ...prevImages,*/}
+                    {/*        {*/}
+                    {/*            name: temp.name,*/}
+                    {/*            url:  temp.url,*/}
+                    {/*            id:  imageCount  + 1,*/}
+                    {/*            scale: imageScale,*/}
+
+                    {/*        }])*/}
+                    {/*}*/}
+                    {/*}>Duplicate</button>*/}
+                    <button onClick={yapi}>Copy</button>
+                    <button onClick={kopyala}>Paste</button>
                 </div>
 
             </div>
