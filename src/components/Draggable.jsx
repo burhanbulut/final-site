@@ -41,7 +41,7 @@ export default function Draggable({images}) {
             newClipboard.current = cloned
         });
 
-        // clone again, so you can do multiple copies.
+
         newClipboard.current.clone(function (clonedObj) {
             newCanvas.current.discardActiveObject();
             console.log(clonedObj)
@@ -51,12 +51,12 @@ export default function Draggable({images}) {
                 evented: true,
             });
             if (clonedObj.type === 'activeSelection') {
-                // active selection needs a reference to the canvas.
+
                 clonedObj.canvas =  newCanvas.current;
                 clonedObj.forEachObject(function (obj) {
                     newCanvas.current.add(obj);
                 });
-                // this should solve the unselectability
+
                 clonedObj.setCoords();
             } else {
                 newCanvas.current.add(clonedObj);
